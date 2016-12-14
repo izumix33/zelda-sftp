@@ -12,6 +12,7 @@ module SftpServer
     get :execute do
       username = params[:username]
       if not_exists?(username)
+        puts 'not exists!!'
         create_user(username)
       end
 
@@ -40,8 +41,8 @@ module SftpServer
         setup_dirs << "sudo chown -R #{username}:#{username} /home/#{username}/.ssh"
         setup_dirs << "sudo chown #{username}:#{username} /home/#{username}/uploads"
         setup_dirs << "sudo chown #{username}:#{username} /home/#{username}/downloads"
-        #puts add_cmd
-        #puts setup_dirs.join(';')
+        puts add_cmd
+        puts setup_dirs.join(';')
         puts `#{add_cmd}`
         puts `#{setup_dirs.join(';')}`
       end
