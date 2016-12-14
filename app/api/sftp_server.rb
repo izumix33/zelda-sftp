@@ -14,15 +14,16 @@ module SftpServer
       def create_user(username)
         add_cmd = "sudo useradd #{username}"
         setup_dirs = []
-        setup_dirs << "sudo chown root:root /home/#{username}"
-        setup_dirs << "sudo chmod 755 /home/#{username}"
-        setup_dirs << "sudo mkdir /home/#{username}/.ssh"
-        setup_dirs << "sudo mkdir /home/#{username}/uploads"
-        setup_dirs << "sudo mkdir /home/#{username}/downloads"
-        setup_dirs << "sudo touch /home/#{username}/.ssh/authorized_keys"
-        setup_dirs << "sudo chown -R #{username}:#{username} /home/#{username}/.ssh"
-        setup_dirs << "sudo chown #{username}:#{username} /home/#{username}/uploads"
-        setup_dirs << "sudo chown #{username}:#{username} /home/#{username}/downloads"
+        setup_dirs << "sudo chown root:root /mnt/efs/#{username}"
+        setup_dirs << "sudo mkdir /mnt/efs/#{username}/uploads"
+        setup_dirs << "sudo mkdir /mnt/efs/#{username}/downloads"
+        setup_dirs << "sudo chmod 755 /mnt/efs/#{username}"
+
+        setup_dirs << "sudo mkdir /mnt/efs/#{username}/.ssh"
+        setup_dirs << "sudo touch /mnt/efs/#{username}/.ssh/authorized_keys"
+        setup_dirs << "sudo chown -R #{username}:#{username} /mnt/efs/#{username}/.ssh"
+        setup_dirs << "sudo chown #{username}:#{username} /mnt/efs/#{username}/uploads"
+        setup_dirs << "sudo chown #{username}:#{username} /mnt/efs/#{username}/downloads"
         puts `#{add_cmd}`
         puts `#{setup_dirs.join(';')}`
       end
@@ -32,11 +33,11 @@ module SftpServer
                      'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBuGjDM73O8zFR/JM9Qe5uDa3Qgeqeplw0UWInF7eR02y+cvX5Jfe0buHTw30zq9VHwbdmzFElptLgrTFiPhjtHuh3UjT1nzpZk3QLhcWXBJv0RyOw+MMRnS2pXke/9RvSJ+tER7ZCA34AtPtXw4eYfoddw9EplBqRv6hdUxaHZ7pnhjoS/kIqDr8Ab2+Jg7gwODIFhDu9wGRK8J0r21VlFHEq0l2IkqcN/lgl5g+qQEtiA/GGH8OCIcZLThZ/Oow/GPkOOMZkcFXrINVjx118+r+TAwFEvHgujGQWMkjDROe+zV71GasPwwUKm2VySLP1hp+YsyS4bjiB0xt2iecv mix@MixMacBook-3.local', 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtPnRbfplBUk85lMrwyuX76rqdDDDnKO5cxuGiaIbhdLYbvZtfv484DRSiB/+FvQPwwtLQP532gxa+E+ZqfMFtXgC60UQjC79Ho3f+W/O2aGFg+XnwFbNOSx3fAo8bznrDThCnRlv0kJcsLgTaUcXsq5HE2h6pMKC2M/HRZ0xrgBYIjpy06B05sTgCKyQjdhVVbJR9m0JP2ECQ1wvyzTEevTGk836sSJHi10hdPhuTUj26KsJmbIyg34m5rCCKn4MPPUAzzfXUXZWaKHyYaoqRTG3deSc3ia+HXt+HOGnALe0v24hir8thaSPL1tmqYYIme+eDuIAUnhq0uI5acmIl mix@MixMacBook-3.local']
         new_authorized_keys = sftp_keys.join("\n")
 
-        # original = File.open("/home/#{username}/.ssh/authorized_keys").read
-        original = `sudo cat /home/#{username}/.ssh/authorized_keys`
+        # original = File.open("/mnt/efs/#{username}/.ssh/authorized_keys").read
+        original = `sudo cat /mnt/efs/#{username}/.ssh/authorized_keys`
         unless new_authorized_keys == original
           File.open("tmp/#{username}_authorized_keys", 'w') { |fp| fp.write new_authorized_keys }
-          copy_cmd = "sudo cp tmp/#{username}_authorized_keys /home/#{username}/.ssh/authorized_keys"
+          copy_cmd = "sudo cp tmp/#{username}_authorized_keys /mnt/efs/#{username}/.ssh/authorized_keys"
           puts `#{copy_cmd}`
           File.delete("tmp/#{username}_authorized_keys")
         end
@@ -59,7 +60,6 @@ module SftpServer
     end
 
     get :test do
-      current_user
       'test'
     end
 
