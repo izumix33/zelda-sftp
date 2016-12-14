@@ -14,8 +14,8 @@ module SftpServer
         check_cmd = "grep -e \"^#{username}:\" /etc/passwd | wc -l"
         puts check_cmd
         result = `#{check_cmd}`.chop
-        puts result == 0
-        result == 0
+        p result == 0
+        result.to_i == 0
       end
 
       def create_user(username)
