@@ -73,7 +73,7 @@ module SftpServer
       end
 
       update_authorized_keys(username)
-      'finish!!'
+      "sudo useradd #{username} -d /mnt/efs/#{username} -m"
     end
 
     get :test do
