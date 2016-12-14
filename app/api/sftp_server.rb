@@ -28,7 +28,10 @@ module SftpServer
     private
       def not_exists?(username)
         check_cmd = "grep -e \"^#{username}:\" /etc/passwd | wc -l"
-        `#{check_cmd}`.chop == 0
+        puts check_cmd
+        result = `#{check_cmd}`.chop
+        puts result
+        result == 0
       end
 
       def create_user(username)
