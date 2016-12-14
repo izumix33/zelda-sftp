@@ -18,7 +18,7 @@ module SftpServer
         # に100000以上で！
         # taka1:x:505:505::/home/taka1:/bin/bash
         # taka:x:503:
-        puts `"sudo useradd #{username} -d /mnt/efs/#{username}"`
+        puts `sudo useradd #{username} -d /mnt/efs/#{username}`
 
         # passwd_file = '/etc/passwd'
         # no = CSV.read(passwd_file, headers:false, col_sep:':').reduce(100000){|max, row| [max, row[2].to_i].max}
