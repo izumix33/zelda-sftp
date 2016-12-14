@@ -17,6 +17,7 @@ module SftpServer
       end
 
       update_authorized_keys(username)
+      'finish!!'
     end
 
     get :test do
