@@ -13,7 +13,12 @@ module SftpServer
 
       def create_user(username)
         add_cmd = "sudo useradd #{username}"
+        puts `#{add_cmd}`
+      end
+
+      def create_user_dir(username)
         setup_dirs = []
+        setup_dirs << "sudo mkdir /mnt/efs/#{username}"
         setup_dirs << "sudo chown root:root /mnt/efs/#{username}"
         setup_dirs << "sudo mkdir /mnt/efs/#{username}/uploads"
         setup_dirs << "sudo mkdir /mnt/efs/#{username}/downloads"
@@ -24,7 +29,6 @@ module SftpServer
         setup_dirs << "sudo chown -R #{username}:#{username} /mnt/efs/#{username}/.ssh"
         setup_dirs << "sudo chown #{username}:#{username} /mnt/efs/#{username}/uploads"
         setup_dirs << "sudo chown #{username}:#{username} /mnt/efs/#{username}/downloads"
-        puts `#{add_cmd}`
         puts `#{setup_dirs.join(';')}`
       end
 
@@ -44,10 +48,12 @@ module SftpServer
       end
     end
 
+
     # TODO: resource user_setup_resultsとか
     params do
       requires :username, type: String, desc: 'user name'
     end
+
     # TODO: getにしているがputの方がよい？D&A考えると叩けた方が良いかと。。
     get :execute do
       username = params[:username]
