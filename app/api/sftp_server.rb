@@ -11,7 +11,7 @@ module SftpServer
     # TODO: getにしているがputの方がよい？D&A考えると叩けた方が良いかと。。
     get :execute do
       username = params[:username]
-      if exists?(username)
+      if not_exists?(username)
         create_user(username)
       end
 
