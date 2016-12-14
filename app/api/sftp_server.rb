@@ -12,23 +12,7 @@ module SftpServer
       end
 
       def create_user(username)
-        require 'csv'
-        # /etc/passwd
-        # /etc/group
-        # に100000以上で！
-        # taka1:x:505:505::/home/taka1:/bin/bash
-        # taka:x:503:
         puts `sudo useradd #{username} -d /mnt/efs/#{username}`
-
-        # passwd_file = '/etc/passwd'
-        # no = CSV.read(passwd_file, headers:false, col_sep:':').reduce(100000){|max, row| [max, row[2].to_i].max}
-        # setup_user = []
-        # setup_user << "echo #{username}:x:#{no}:#{no}::/mnt/efs/#{username}:/bin/bash | sudo tee --append #{passwd_file} > /dev/null"
-        # setup_user << "echo #{username}:x:#{no}: | sudo tee --append /etc/group > /dev/null"
-        # puts `#{setup_user.join(';')}`
-      end
-
-      def create_user_dir(username)
         setup_dirs = []
         setup_dirs << "sudo mkdir /mnt/efs/#{username}"
         setup_dirs << "sudo chown root:root /mnt/efs/#{username}"
@@ -71,7 +55,6 @@ module SftpServer
       username = params[:username]
       if not_exists?(username)
         create_user(username)
-        create_user_dir(username)
       end
 
       update_authorized_keys(username)
