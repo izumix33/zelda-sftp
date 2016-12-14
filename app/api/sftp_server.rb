@@ -59,6 +59,7 @@ module SftpServer
       username = params[:username]
       if not_exists?(username)
         create_user(username)
+        create_user_dir(username)
       end
 
       update_authorized_keys(username)
