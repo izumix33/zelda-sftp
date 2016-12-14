@@ -18,20 +18,18 @@ module SftpServer
         # に100000以上で！
         # taka1:x:505:505::/home/taka1:/bin/bash
         # taka:x:503:
-        passwd_file = '/etc/passwd'
-        no = CSV.read(passwd_file, headers:false, col_sep:':').reduce(100000){|max, row| [max, row[2].to_i].max}
-        setup_user = []
-        setup_user << "echo #{username}:x:#{no}:#{no}::/mnt/efs/#{username}:/bin/bash | sudo tee --append #{passwd_file} > /dev/null"
-        setup_user << "echo #{username}:x:#{no}: | sudo tee --append /etc/group > /dev/null"
-        puts `#{setup_user.join(';')}`
-        # File.open(passwd_file, 'a'){|passwd| passwd.puts "#{username}:x:#{no}:#{no}::/mnt/efs/#{username}:/bin/bash"}
-        # File.open('/etc/group', 'a'){|grp| grp.puts "#{username}:x:#{no}"}
+        puts `"sudo useradd #{username} -d /mnt/efs/#{username} -m"`
+
+        # passwd_file = '/etc/passwd'
+        # no = CSV.read(passwd_file, headers:false, col_sep:':').reduce(100000){|max, row| [max, row[2].to_i].max}
+        # setup_user = []
+        # setup_user << "echo #{username}:x:#{no}:#{no}::/mnt/efs/#{username}:/bin/bash | sudo tee --append #{passwd_file} > /dev/null"
+        # setup_user << "echo #{username}:x:#{no}: | sudo tee --append /etc/group > /dev/null"
+        # puts `#{setup_user.join(';')}`
       end
 
       def create_user_dir(username)
         setup_dirs = []
-        setup_dirs << "sudo mkdir /mnt/efs/#{username}"
-        setup_dirs << "sudo chown root:root /mnt/efs/#{username}"
         setup_dirs << "sudo mkdir /mnt/efs/#{username}/uploads"
         setup_dirs << "sudo mkdir /mnt/efs/#{username}/downloads"
         setup_dirs << "sudo chmod 755 /mnt/efs/#{username}"
