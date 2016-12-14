@@ -18,6 +18,10 @@ module SftpServer
       update_authorized_keys(username)
     end
 
+    get :test do
+      'test'
+    end
+
     private
       def not_exists?(username)
         check_cmd = "grep -e \"^#{username}:\" /etc/passwd | wc -l"
