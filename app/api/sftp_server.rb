@@ -14,7 +14,7 @@ module SftpServer
         check_cmd = "grep -e \"^#{username}:\" /etc/passwd | wc -l"
         puts check_cmd
         result = `#{check_cmd}`.chop
-        puts result
+        puts result == 0
         result == 0
       end
 
